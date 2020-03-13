@@ -1,5 +1,14 @@
+import csv
+import itertools
+
 # Create a class to hold a city location. Call the class "City". It should have
 # fields for name, lat and lon (representing latitude and longitude).
+
+class City:
+  def __init__ (self,name,lat,lon):
+    self.name = name
+    self.lat = lat
+    self.lon = lon
 
 
 # We have a collection of US cities with population over 750,000 stored in the
@@ -20,14 +29,19 @@ def cityreader(cities=[]):
   # TODO Implement the functionality to read from the 'cities.csv' file
   # For each city record, create a new City instance and add it to the 
   # `cities` list
-    
+  with open("./cities.csv", newline = "") as csvfile:
+    cityreader = csv.reader(csvfile, delimiter=',')
+    next(cityreader)
+    for row in cityreader:
+      city = City(row[0],float(row[3]),float(row[4]))
+      cities.append(city)
     return cities
 
 cityreader(cities)
 
-# Print the list of cities (name, lat, lon), 1 record per line.
-for c in cities:
-    print(c)
+# # Print the list of cities (name, lat, lon), 1 record per line.
+for city in cities:
+    print(city.name,city.lat,city.lon)
 
 # STRETCH GOAL!
 #
@@ -61,11 +75,21 @@ for c in cities:
 # TODO Get latitude and longitude values from the user
 
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
-  # within will hold the cities that fall within the specified region
   within = []
-
-  # TODO Ensure that the lat and lon valuse are all floats
-  # Go through each city and check to see if it falls within 
-  # the specified coordinates.
+  lat_bigger = float(max(lat1,lat2))
+  lon_bigger = float(max(lon1,lon2))
+  lat_smaller = float(min(lat1,lat2))
+  lon_smaller = float(min(lon1,lon2))
+  
+  for city in cities:
+    if lat_smaller <= city.lat <= lat_bigger and lon_smaller <= city.lon <= lon_bigger:
+      within.append(city)
 
   return within
+
+
+choice1 = input("enter '[lat1],[lon1]': ").split(",")
+choice2 = input("enter '[lat2],[lon2]': ").split(",")
+results = cityreader_stretch(choice1[0],choice1[1],choice2[0],choice2[1],cities)
+for result in results:
+  print(result.name,(result.lat,result.lon))
